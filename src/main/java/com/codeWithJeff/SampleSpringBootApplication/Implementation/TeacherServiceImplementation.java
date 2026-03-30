@@ -5,6 +5,7 @@ import com.codeWithJeff.SampleSpringBootApplication.Repository.TeacherRepository
 import com.codeWithJeff.SampleSpringBootApplication.Service.TeacherService;
 import com.codeWithJeff.SampleSpringBootApplication.dto.TeacherRequestDto;
 import com.codeWithJeff.SampleSpringBootApplication.dto.TeacherResponseDto;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,10 +34,22 @@ public class TeacherServiceImplementation implements TeacherService {
     }
 
     @Override
+    public List<TeacherResponseDto> getAllTeachers(){
+        return teacherRepository.findAll().stream().map(this::toResponseTeacher).toList();
+    }
+
+    @Override
     public TeacherResponseDto getTeacherById(Long id){
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Teachers not found"));
         return toResponseTeacher(teacher);
+    }
+
+    @Override
+    public void deleteTeacherById(Long id){
+        Teacher teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Teacher not found"));
+        teacherRepository.delete(teacher);
     }
 
     private TeacherResponseDto toResponseTeacher(Teacher teacher){
