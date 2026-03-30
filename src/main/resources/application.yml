@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: SampleSpringBootApplication
+  profiles:
+    active: h2
+
+server:
+  port: 7000
