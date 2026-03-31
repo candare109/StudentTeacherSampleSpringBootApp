@@ -183,6 +183,32 @@ $env:DB_PASSWORD = "Test_123"
 
 ## 🔍 Azure Cloud Shell — psql Commands
 
+### Test connectivity first
+
+Before running queries, verify you can reach the Azure PostgreSQL server:
+
+```bash
+# Test network connectivity (from Azure Cloud Shell or any terminal)
+pg_isready -h java-practice-springboot.postgres.database.azure.com -p 5432
+
+# Expected output: "accepting connections"
+```
+
+```powershell
+# Test from Windows PowerShell
+Test-NetConnection -ComputerName java-practice-springboot.postgres.database.azure.com -Port 5432
+
+# Look for: TcpTestSucceeded = True
+```
+
+```bash
+# Quick login test (returns version if credentials work)
+PGPASSWORD='Test_123' psql "host=java-practice-springboot.postgres.database.azure.com port=5432 dbname=studentdb user=springdb sslmode=require" -c "SELECT version();"
+```
+
+> If connectivity fails: check [Azure Firewall Setup](#-azure-firewall-setup).
+> If password fails: verify credentials in [Azure PostgreSQL Connection Details](#azure-postgresql-connection-details).
+
 ### One-liner queries (from bash — no interactive session needed)
 
 ```bash
