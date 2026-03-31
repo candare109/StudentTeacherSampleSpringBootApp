@@ -2,7 +2,7 @@ spring:
   application:
     name: SampleSpringBootApplication
   profiles:
-    active: h2
+    active: ${SPRING_PROFILES_ACTIVE:h2}
 
 server:
   port: 7000
