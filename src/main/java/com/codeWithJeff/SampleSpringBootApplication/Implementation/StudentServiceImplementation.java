@@ -52,7 +52,7 @@ public class StudentServiceImplementation implements StudentService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
 
         studentRepository.findByEmail(requestDto.getEmail())
-                .filter(existing -> !existing.getId().equals(id))
+                .filter(existing -> !existing.getStudentId().equals(id))
                 .ifPresent(existing -> {
                     throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
                 });
@@ -75,7 +75,7 @@ public class StudentServiceImplementation implements StudentService {
 
     private StudentResponseDto toResponse(Student student) {
         return StudentResponseDto.builder()
-                .id(student.getId())
+                .id(student.getStudentId())
                 .firstName(student.getFirstName())
                 .lastName(student.getLastName())
                 .email(student.getEmail())

@@ -17,7 +17,4 @@ public class TeacherRequestDto {
 
     @NotBlank
     private String lastName;
-
-    @NotBlank
-    private String course;
 }

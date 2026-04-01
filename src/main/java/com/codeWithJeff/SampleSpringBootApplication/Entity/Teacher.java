@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long teacherId;
 
     @Column(nullable = false, length = 100)
     private String firstName;
@@ -29,9 +29,8 @@ public class Teacher {
     @Column(nullable = false, length = 100)
     private String lastName;
 
-    @Column(nullable = false, length = 100)
-    private String course;
 
 
 
 }
+

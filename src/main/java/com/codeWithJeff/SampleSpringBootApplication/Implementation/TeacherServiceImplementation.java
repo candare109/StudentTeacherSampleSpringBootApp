@@ -1,6 +1,7 @@
 package com.codeWithJeff.SampleSpringBootApplication.Implementation;
 
 import com.codeWithJeff.SampleSpringBootApplication.Entity.Teacher;
+import com.codeWithJeff.SampleSpringBootApplication.Repository.SubjectRepository;
 import com.codeWithJeff.SampleSpringBootApplication.Repository.TeacherRepository;
 import com.codeWithJeff.SampleSpringBootApplication.Service.TeacherService;
 import com.codeWithJeff.SampleSpringBootApplication.dto.TeacherRequestDto;
@@ -16,18 +17,13 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 
 public class TeacherServiceImplementation implements TeacherService {
-    private final TeacherRepository teacherRepository;
+    private final TeacherRepository teacherRepository;;
 
     @Override
     public TeacherResponseDto createTeacher(TeacherRequestDto requestDto) {
-        if (!teacherRepository.findByCourse(requestDto.getCourse()).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Course already exists");
-        }
-
         Teacher teacher = Teacher.builder()
                 .firstName(requestDto.getFirstName())
                 .lastName(requestDto.getLastName())
-                .course(requestDto.getCourse())
                 .build();
 
         return toResponseTeacher(teacherRepository.save(teacher));
@@ -54,10 +50,9 @@ public class TeacherServiceImplementation implements TeacherService {
 
     private TeacherResponseDto toResponseTeacher(Teacher teacher){
         return TeacherResponseDto.builder()
-                .id(teacher.getId())
+                .id(teacher.getTeacherId())
                 .firstName(teacher.getFirstName())
                 .lastName(teacher.getLastName())
-                .course(teacher.getCourse())
                 .build();
     }
 

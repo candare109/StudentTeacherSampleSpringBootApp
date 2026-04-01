@@ -1,6 +1,6 @@
 # 🎓 SampleSpringBootApplication
 
-A **Spring Boot 4.0.5** REST API for managing Students and Teachers, built with a clean layered architecture. Supports both **H2 (in-memory)** for local development and **Azure PostgreSQL** for cloud deployment.
+A **Spring Boot 4.0.5** REST API for managing Students, Teachers, and Subjects, built with a clean layered architecture. Supports both **H2 (in-memory)** for local development and **Azure PostgreSQL** for cloud deployment. Features JPA entity relationships (`@ManyToOne`, `@OneToOne`) for relational data modeling.
 
 ![Java](https://img.shields.io/badge/Java-21-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.5-green)
@@ -53,24 +53,30 @@ src/main/java/com/codeWithJeff/SampleSpringBootApplication/
 ├── Controller/
 │   ├── StudentController.java            # /api/students REST endpoints
 │   ├── TeacherController.java            # /api/teachers REST endpoints
+│   ├── SubjectController.java            # /api/subject REST endpoints
 │   └── SpringRestController.java
 ├── dto/
 │   ├── StudentRequestDto.java            # Student input validation
 │   ├── StudentResponseDto.java           # Student API response
 │   ├── TeacherRequestDto.java            # Teacher input validation
-│   └── TeacherResponseDto.java           # Teacher API response
+│   ├── TeacherResponseDto.java           # Teacher API response
+│   └── SubjectDto.java                   # Subject request & response (single DTO)
 ├── Entity/
 │   ├── Student.java                      # JPA entity → students table
-│   └── Teacher.java                      # JPA entity → teachers table
+│   ├── Teacher.java                      # JPA entity → teachers table
+│   └── Subject.java                      # JPA entity → subject table (FK to students & teachers)
 ├── Repository/
 │   ├── StudentRepository.java            # JpaRepository<Student, Long>
-│   └── TeacherRepository.java            # JpaRepository<Teacher, Long>
+│   ├── TeacherRepository.java            # JpaRepository<Teacher, Long>
+│   └── SubjectRepository.java            # JpaRepository<Subject, Long> + custom queries
 ├── Service/
 │   ├── StudentService.java               # Business contract (interface)
-│   └── TeacherService.java               # Business contract (interface)
+│   ├── TeacherService.java               # Business contract (interface)
+│   └── SubjectService.java               # Business contract (interface)
 ├── Implementation/
 │   ├── StudentServiceImplementation.java # Service logic
-│   └── TeacherServiceImplementation.java # Service logic
+│   ├── TeacherServiceImplementation.java # Service logic
+│   └── SubjectServiceImplementation.java # Service logic + multi-repo validation
 ├── Exceptions/                           # Custom exception handling
 └── Util/                                 # Utility classes
 
@@ -199,6 +205,12 @@ pg_isready -h java-practice-springboot.postgres.database.azure.com -p 5432
 Test-NetConnection -ComputerName java-practice-springboot.postgres.database.azure.com -Port 5432
 
 # Look for: TcpTestSucceeded = True
+# If TcpTestSucceeded = False but PingSucceeded = True: org firewall is blocking port 5432
+```
+
+```powershell
+# Test port 443 as a control (should always work)
+Test-NetConnection -ComputerName java-practice-springboot.postgres.database.azure.com -Port 443
 ```
 
 ```bash
@@ -208,6 +220,7 @@ PGPASSWORD='Test_123' psql "host=java-practice-springboot.postgres.database.azur
 
 > If connectivity fails: check [Azure Firewall Setup](#-azure-firewall-setup).
 > If password fails: verify credentials in [Azure PostgreSQL Connection Details](#azure-postgresql-connection-details).
+> If TcpTestSucceeded = False on corp WiFi: try mobile hotspot.
 
 ### One-liner queries (from bash — no interactive session needed)
 
@@ -221,9 +234,16 @@ PGPASSWORD='Test_123' psql "host=java-practice-springboot.postgres.database.azur
 # View all teachers
 PGPASSWORD='Test_123' psql "host=java-practice-springboot.postgres.database.azure.com port=5432 dbname=studentdb user=springdb sslmode=require" -c "SELECT * FROM teachers;"
 
+# View all subjects (with FK references)
+PGPASSWORD='Test_123' psql "host=java-practice-springboot.postgres.database.azure.com port=5432 dbname=studentdb user=springdb sslmode=require" -c "SELECT * FROM subject;"
+
 # Describe table structure
 PGPASSWORD='Test_123' psql "host=java-practice-springboot.postgres.database.azure.com port=5432 dbname=studentdb user=springdb sslmode=require" -c "\d students"
 PGPASSWORD='Test_123' psql "host=java-practice-springboot.postgres.database.azure.com port=5432 dbname=studentdb user=springdb sslmode=require" -c "\d teachers"
+PGPASSWORD='Test_123' psql "host=java-practice-springboot.postgres.database.azure.com port=5432 dbname=studentdb user=springdb sslmode=require" -c "\d subject"
+
+# Drop all tables (schema reset — if entity changes cause 500 errors)
+PGPASSWORD='Test_123' psql "host=java-practice-springboot.postgres.database.azure.com port=5432 dbname=studentdb user=springdb sslmode=require" -c "DROP TABLE IF EXISTS subject, teachers, students CASCADE;"
 ```
 
 ### Interactive session
@@ -238,8 +258,10 @@ Once connected (`studentdb=>`):
 \dt                      -- list all tables
 SELECT * FROM students;  -- view students
 SELECT * FROM teachers;  -- view teachers
+SELECT * FROM subject;   -- view subjects with FK references
 \d students              -- describe students table
 \d teachers              -- describe teachers table
+\d subject               -- describe subject table
 \q                       -- exit psql
 ```
 
@@ -295,9 +317,42 @@ SELECT * FROM teachers;  -- view teachers
 ```json
 {
   "firstName": "John",
-  "lastName": "Smith",
-  "course": "Mathematics"
+  "lastName": "Smith"
 }
+```
+
+### Subjects — `/api/subject`
+
+| Method | Endpoint | Description | Status |
+|---|---|---|---|
+| `POST` | `/api/subject` | Create a subject (links student + teacher) | `201 Created` |
+
+**Sample request body (POST):**
+
+```json
+{
+  "studentId": 1,
+  "teacherId": 2,
+  "subject": "Mathematics"
+}
+```
+
+**Sample response:**
+
+```json
+{
+  "subjectId": 1,
+  "studentId": 1,
+  "teacherId": 2,
+  "subject": "Mathematics",
+  "studentName": "Andrew Candare",
+  "teacherName": "John Smith"
+}
+```
+
+**Validation errors:**
+- `409 Conflict` → "Subject already exists" or "Teacher already has a subject assigned"
+- `404 Not Found` → "Teacher not found" or "Student not found"
 ```
 
 ### Swagger UI
@@ -314,7 +369,7 @@ Tables are auto-created by Hibernate (`ddl-auto: update`).
 
 | Column | Type | Constraints |
 |---|---|---|
-| `id` | `BIGINT` | PK, auto-increment |
+| `student_id` | `BIGINT` | PK, auto-increment |
 | `first_name` | `VARCHAR(100)` | NOT NULL |
 | `last_name` | `VARCHAR(100)` | NOT NULL |
 | `email` | `VARCHAR(150)` | NOT NULL, UNIQUE |
@@ -325,10 +380,31 @@ Tables are auto-created by Hibernate (`ddl-auto: update`).
 
 | Column | Type | Constraints |
 |---|---|---|
-| `id` | `BIGINT` | PK, auto-increment |
+| `teacher_id` | `BIGINT` | PK, auto-increment |
 | `first_name` | `VARCHAR(100)` | NOT NULL |
 | `last_name` | `VARCHAR(100)` | NOT NULL |
-| `course` | `VARCHAR(100)` | NOT NULL |
+
+### `subject`
+
+| Column | Type | Constraints |
+|---|---|---|
+| `subject_id` | `BIGINT` | PK, auto-increment |
+| `student_id` | `BIGINT` | NOT NULL, FK → students |
+| `teacher_id` | `BIGINT` | NOT NULL, UNIQUE, FK → teachers |
+| `subject` | `VARCHAR(100)` | NOT NULL |
+
+### Entity Relationships
+
+```
+┌────────────┐       ┌────────────┐       ┌────────────┐
+│  students  │◄──┐   │  subject   │   ┌──►│  teachers  │
+│            │   └───│ student_id │   │   │            │
+│            │       │ teacher_id │───┘   │            │
+└────────────┘       └────────────┘       └────────────┘
+```
+
+- **Subject → Student:** `@ManyToOne` — many subjects can reference one student
+- **Subject → Teacher:** `@OneToOne` — each teacher teaches exactly one subject
 
 ---
 
@@ -538,23 +614,29 @@ Thumbs.db
 |---|---|---|
 | `password authentication failed` | Wrong username or password | Verify credentials; use `springdb` (not `springdb@server`) for Flexible Server |
 | `connection refused` | IP not whitelisted | Azure Portal → Networking → Add your client IP → Save |
+| `TcpTestSucceeded: False` | Org firewall blocks port 5432 | Try mobile hotspot, or check if org allows outbound 5432 |
 | `database "studentdb" does not exist` | DB not created | Azure Portal → Databases → Add `studentdb` |
+| `null value in column "course"` | Old NOT NULL column still in DB | Drop tables via psql and restart app (see Azure Cloud Shell section) |
 | `bash: SELECT: command not found` | Typed SQL in bash, not psql | Use `PGPASSWORD=... psql ... -c "SELECT ..."` or open interactive psql first |
 | `relation "students" does not exist` | Tables not created | Run Spring Boot app once with `ddl-auto: update` to auto-create tables |
 | App uses H2 instead of PostgreSQL | Profile not set | Set `$env:SPRING_PROFILES_ACTIVE = "postgres"` before `bootRun` |
 | `Port 7000 already in use` | Another instance running | Kill it or change port in `application.yml` |
+| `500 Internal Server Error` on POST | Schema mismatch (old columns) | Drop tables via psql, restart app |
 
 ---
 
 ## 💡 Practice Ideas
 
+- [x] Add Student ↔ Teacher relationship via Subject entity (Many-to-One, One-to-One)
+- [x] Remove `course` from Teacher — subjects assigned separately
+- [ ] Add `GET /api/subject` and `DELETE /api/subject/{id}` endpoints
+- [ ] Separate `SubjectRequestDto` / `SubjectResponseDto` (cleaner Swagger UI)
 - [ ] Add `PUT /api/teachers/{id}` update endpoint
 - [ ] Add pagination and sorting on GET endpoints
 - [ ] Add search endpoints (`findByEmail`, `findByCourse`)
 - [ ] Add global exception handling with `@ControllerAdvice`
 - [ ] Add unit tests for service layer with Mockito
 - [ ] Add `createdAt` / `updatedAt` timestamps to entities
-- [ ] Add Student ↔ Teacher relationship (Many-to-One)
 - [ ] Dockerize the application
 - [ ] Deploy to Azure App Service
 - [ ] Move secrets to Azure Key Vault

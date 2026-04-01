@@ -31,5 +31,6 @@ public class StudentRequestDto {
 
     @NotBlank
     private String course;
+
 }
 
