@@ -1,15 +1,15 @@
 package com.codeWithJeff.SampleSpringBootApplication.Implementation;
 
 import com.codeWithJeff.SampleSpringBootApplication.Entity.Student;
+import com.codeWithJeff.SampleSpringBootApplication.Exceptions.ResourceAlreadyExistsException;
+import com.codeWithJeff.SampleSpringBootApplication.Exceptions.ResourceNotFoundException;
 import com.codeWithJeff.SampleSpringBootApplication.Repository.StudentRepository;
 import com.codeWithJeff.SampleSpringBootApplication.Service.StudentService;
 import com.codeWithJeff.SampleSpringBootApplication.dto.StudentRequestDto;
 import com.codeWithJeff.SampleSpringBootApplication.dto.StudentResponseDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +20,7 @@ public class StudentServiceImplementation implements StudentService {
     @Override
     public StudentResponseDto createStudent(StudentRequestDto requestDto) {
         studentRepository.findByEmail(requestDto.getEmail()).ifPresent(existing -> {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+            throw new ResourceAlreadyExistsException("Email already exists");
         });
 
         Student student = Student.builder()
@@ -42,19 +42,19 @@ public class StudentServiceImplementation implements StudentService {
     @Override
     public StudentResponseDto getStudentById(Long id) {
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
         return toResponse(student);
     }
 
     @Override
     public StudentResponseDto updateStudent(Long id, StudentRequestDto requestDto) {
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
 
         studentRepository.findByEmail(requestDto.getEmail())
                 .filter(existing -> !existing.getStudentId().equals(id))
                 .ifPresent(existing -> {
-                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+                    throw new ResourceAlreadyExistsException("Email already exists");
                 });
 
         student.setFirstName(requestDto.getFirstName());
@@ -69,7 +69,7 @@ public class StudentServiceImplementation implements StudentService {
     @Override
     public void deleteStudent(Long id) {
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
         studentRepository.delete(student);
     }
 

@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/subject")
 @RequiredArgsConstructor
@@ -17,5 +19,9 @@ public class SubjectController {
     @ResponseStatus(HttpStatus.CREATED)
     public SubjectDto createSubject(@Valid @RequestBody SubjectDto requestSubjectDto){
         return subjectService.createSubject(requestSubjectDto);
+    }
+    @GetMapping
+    public List<SubjectDto> getAllSubjects(){
+        return subjectService.getAllSubjects();
     }
 }

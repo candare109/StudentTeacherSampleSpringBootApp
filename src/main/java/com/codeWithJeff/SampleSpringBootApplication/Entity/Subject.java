@@ -24,8 +24,8 @@ public class Subject {
     @JoinColumn(name="student_id", nullable = false)
     private Student student;
 
-    @OneToOne
-    @JoinColumn(name="teacher_id", nullable = false, unique = true)
+    @ManyToOne
+    @JoinColumn(name="teacher_id", nullable = false)
     private Teacher teacher;
 
     @Column(nullable = false, length = 100)
