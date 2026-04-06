@@ -46,6 +46,17 @@ public class TeacherServiceImplementation implements TeacherService {
         teacherRepository.delete(teacher);
     }
 
+    @Override
+    public TeacherResponseDto updateTeacherById(Long id, TeacherRequestDto teacherRequestDto){
+       
+        Teacher teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
+
+        teacher.setFirstName(teacherRequestDto.getFirstName());
+        teacher.setLastName(teacherRequestDto.getLastName());
+
+        return toResponseTeacher(teacherRepository.save(teacher));
+    }
     private TeacherResponseDto toResponseTeacher(Teacher teacher){
         return TeacherResponseDto.builder()
                 .id(teacher.getTeacherId())
