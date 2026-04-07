@@ -1,6 +1,5 @@
 package com.codeWithJeff.SampleSpringBootApplication.Controller;
 
-import com.codeWithJeff.SampleSpringBootApplication.Repository.GradesRepository;
 import com.codeWithJeff.SampleSpringBootApplication.dto.GradesRequestDto;
 import com.codeWithJeff.SampleSpringBootApplication.dto.GradesResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +30,11 @@ public class GradesController {
     @ResponseStatus(HttpStatus.FOUND)
     public List<GradesResponseDto> getAllGrades(){
         return gradesService.getAllGrades();
+    }
+
+    @GetMapping("/student/{studentId}/average")
+    @ResponseStatus(HttpStatus.OK)
+    public double getAverageGradeByStudentId(@PathVariable Long studentId){
+        return gradesService.getAverageGradeByStudentId(studentId);
     }
 }

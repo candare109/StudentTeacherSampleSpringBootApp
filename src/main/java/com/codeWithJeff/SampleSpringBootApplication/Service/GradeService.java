@@ -12,4 +12,5 @@ public interface GradeService {
     GradesResponseDto createGrades(GradesRequestDto gradesRequestDto);
     GradesResponseDto getGradesById(Long id);
     List<GradesResponseDto> getAllGrades();
+    double getAverageGradeByStudentId(Long studentId);
 }

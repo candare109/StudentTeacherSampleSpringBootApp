@@ -637,6 +637,7 @@ Thumbs.db
 - [ ] Add global exception handling with `@ControllerAdvice`
 - [ ] Add unit tests for service layer with Mockito
 - [ ] Add `createdAt` / `updatedAt` timestamps to entities
+- [ ] **Add JWT Authentication** → [`docs/JWT_AUTHENTICATION_GUIDE.md`](docs/JWT_AUTHENTICATION_GUIDE.md)
 - [ ] Dockerize the application
 - [ ] Deploy to Azure App Service
 - [ ] Move secrets to Azure Key Vault
@@ -648,6 +649,7 @@ Thumbs.db
 | Document | Description |
 |---|---|
 | [`docs/AZURE_POSTGRES_SETUP.md`](docs/AZURE_POSTGRES_SETUP.md) | Azure PostgreSQL integration guide |
+| [`docs/JWT_AUTHENTICATION_GUIDE.md`](docs/JWT_AUTHENTICATION_GUIDE.md) | Step-by-step JWT authentication guide |
 | [`docs/COMPLETE_PROJECT_GUIDE.md`](docs/COMPLETE_PROJECT_GUIDE.md) | Full project walkthrough |
 | [`docs/REQUEST_FLOW_GUIDE.md`](docs/REQUEST_FLOW_GUIDE.md) | Step-by-step request flow explanation |
 | [`docs/DOCUMENTATION_INDEX.md`](docs/DOCUMENTATION_INDEX.md) | Index of all documentation |

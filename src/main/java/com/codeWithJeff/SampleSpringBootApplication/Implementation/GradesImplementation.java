@@ -9,6 +9,7 @@ import com.codeWithJeff.SampleSpringBootApplication.Repository.GradesRepository;
 import com.codeWithJeff.SampleSpringBootApplication.Repository.StudentRepository;
 import com.codeWithJeff.SampleSpringBootApplication.Repository.SubjectRepository;
 import com.codeWithJeff.SampleSpringBootApplication.Service.GradeService;
+import com.codeWithJeff.SampleSpringBootApplication.Util.GradeCalculator;
 import com.codeWithJeff.SampleSpringBootApplication.dto.GradesRequestDto;
 import com.codeWithJeff.SampleSpringBootApplication.dto.GradesResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +61,14 @@ public class GradesImplementation implements GradeService {
         return gradesRepository.findAll().stream().map(this::gradesResponse).toList();
     };
 
+    @Override
+    public double getAverageGradeByStudentId(Long studentId){
+        studentRepository.findById(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+        List<Grades> gradesList = gradesRepository.findByStudent_StudentId(studentId);
+
+        return GradeCalculator.calculateAverageGrade(gradesList);
+    }
 
     private GradesResponseDto gradesResponse(Grades grades){
         return GradesResponseDto.builder()
