@@ -640,7 +640,7 @@ Thumbs.db
 - [ ] **Add JWT Authentication** → [`docs/JWT_AUTHENTICATION_GUIDE.md`](docs/JWT_AUTHENTICATION_GUIDE.md)
 - [ ] Dockerize the application
 - [ ] Deploy to Azure App Service
-- [ ] Move secrets to Azure Key Vault
+- [ ] **Move secrets to Azure Key Vault** → [`docs/AZURE_KEYVAULT_SETUP.md`](docs/AZURE_KEYVAULT_SETUP.md)
 
 ---
 
@@ -649,6 +649,7 @@ Thumbs.db
 | Document | Description |
 |---|---|
 | [`docs/AZURE_POSTGRES_SETUP.md`](docs/AZURE_POSTGRES_SETUP.md) | Azure PostgreSQL integration guide |
+| [`docs/AZURE_KEYVAULT_SETUP.md`](docs/AZURE_KEYVAULT_SETUP.md) | Azure Key Vault secrets management guide |
 | [`docs/JWT_AUTHENTICATION_GUIDE.md`](docs/JWT_AUTHENTICATION_GUIDE.md) | Step-by-step JWT authentication guide |
 | [`docs/COMPLETE_PROJECT_GUIDE.md`](docs/COMPLETE_PROJECT_GUIDE.md) | Full project walkthrough |
 | [`docs/REQUEST_FLOW_GUIDE.md`](docs/REQUEST_FLOW_GUIDE.md) | Step-by-step request flow explanation |

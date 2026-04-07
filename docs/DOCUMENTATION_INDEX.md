@@ -1,3 +1,4 @@
+
 # Documentation Index
 
 **Last Updated:** April 1, 2026
@@ -13,6 +14,12 @@
 - `docs/AZURE_POSTGRES_SETUP.md`
   - Azure Database for PostgreSQL Flexible Server integration steps, environment variables, psql commands, and troubleshooting.
 
+- `docs/AZURE_KEYVAULT_SETUP.md`
+  - Step-by-step Azure Key Vault creation (every portal tab explained), storing secrets, granting access, Spring Boot integration, and troubleshooting.
+
+- `docs/JWT_AUTHENTICATION_GUIDE.md`
+  - Step-by-step JWT authentication guide — how JWT works, full implementation code, testing with Postman, and request flow diagrams.
+
 - `README.md`
   - Quick start, endpoints, profiles, Azure run examples, psql commands, git guide, and troubleshooting.
 
@@ -22,6 +29,8 @@
 2. `docs/COMPLETE_PROJECT_GUIDE.md`
 3. `docs/REQUEST_FLOW_GUIDE.md`
 4. `docs/AZURE_POSTGRES_SETUP.md`
+5. `docs/AZURE_KEYVAULT_SETUP.md`
+6. `docs/JWT_AUTHENTICATION_GUIDE.md`
 
 ## Current Project State (April 1, 2026)
 
