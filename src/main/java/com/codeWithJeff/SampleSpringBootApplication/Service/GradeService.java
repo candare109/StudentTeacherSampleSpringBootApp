@@ -2,9 +2,10 @@ package com.codeWithJeff.SampleSpringBootApplication.Service;
 
 
 
-import com.codeWithJeff.SampleSpringBootApplication.Entity.Grades;
+
 import com.codeWithJeff.SampleSpringBootApplication.dto.GradesRequestDto;
 import com.codeWithJeff.SampleSpringBootApplication.dto.GradesResponseDto;
+
 
 import java.util.List;
 

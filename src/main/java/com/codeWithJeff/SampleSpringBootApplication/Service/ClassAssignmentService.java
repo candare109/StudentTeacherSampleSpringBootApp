@@ -2,8 +2,10 @@ package com.codeWithJeff.SampleSpringBootApplication.Service;
 
 import com.codeWithJeff.SampleSpringBootApplication.dto.ClassAssignmentRequest;
 import com.codeWithJeff.SampleSpringBootApplication.dto.ClassAssignmentResponse;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 
 public interface ClassAssignmentService {
     ClassAssignmentResponse createAssignment(ClassAssignmentRequest requestDto);

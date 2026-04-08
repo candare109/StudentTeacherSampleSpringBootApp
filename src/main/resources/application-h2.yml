@@ -16,3 +16,6 @@ spring:
       hibernate:
         format_sql: true
 
+jwt:
+  secret: my-dev-secret-key-that-is-at-least-256-bits-long-for-hs256-algorithm-ok
+  expiration: 86400000

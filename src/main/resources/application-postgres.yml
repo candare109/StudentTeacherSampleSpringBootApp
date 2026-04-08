@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${DB-URL}
+    username: ${DB-USERNAME}
+    password: ${DB-PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 5
@@ -16,3 +16,20 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  cloud:
+    azure:
+      keyvault:
+        secret:
+          property-source-enabled: true
+          property-sources:
+            - endpoint: https://practice-spring-boot.vault.azure.net/
+
+logging:
+  level:
+    com.azure.spring: DEBUG
+    com.azure.security.keyvault: DEBUG
+    com.azure.identity: DEBUG
+
+jwt:
+  secret: ${DB-JWT-SECRET}
+  expiration: 86400000
